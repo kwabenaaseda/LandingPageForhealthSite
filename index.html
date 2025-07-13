@@ -1,139 +1,666 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sigma Clinic. No.1 Clinic in the East Blue</title>
-    <link rel="icon" href="./images/Exclusion 4Sigma.png">
-    <link rel="stylesheet" href="./css/desktop.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uncle's Legacy - An Immersive Story</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg-light: #fef6e4;
+      --text-light: #1b1b1b;
+      --accent-light: #ffb703;
+      --bg-dark: #0b0c1e;
+      --text-dark: #ffffff;
+      --accent-dark: #ffd700;
+      --gallery-bg-light: rgba(255, 255, 255, 0.8);
+      --gallery-bg-dark: rgba(30, 30, 50, 0.9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: background-color 0.8s, color 0.8s;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    body.dark {
+      background: url('https://www.transparenttextures.com/patterns/stardust.png') repeat, var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    /* Museum framing effects */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 6rem 2rem;
+      text-align: center;
+      position: relative;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .section.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section img {
+      width: 90%;
+      max-width: 600px;
+      margin-bottom: 2rem;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: transform 0.5s ease, box-shadow 0.3s ease;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      border: 12px solid #f5f5f5;
+      background: #f5f5f5;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    body.dark .section img {
+      border-color: #333;
+      background: #333;
+    }
+
+    .section img:hover {
+      transform: scale(1.05) rotate(1deg);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+    }
+
+    .section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      position: relative;
+      padding-bottom: 15px;
+      font-family: 'Times New Roman', serif;
+    }
+
+    .section h2:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--accent-light);
+    }
+
+    body.dark .section h2:after {
+      background: var(--accent-dark);
+    }
+
+    .section p {
+      max-width: 700px;
+      line-height: 1.8;
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      padding: 0 1rem;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.5s ease;
+      z-index: 2000;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-content {
+      background: #1e1e1e;
+      padding: 3rem;
+      border-radius: 15px;
+      max-width: 800px;
+      width: 90%;
+      text-align: center;
+      color: #fff;
+      position: relative;
+      transform: scale(0.8);
+      opacity: 0;
+      transition: all 0.5s ease;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal.active .modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .modal-content h3 {
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      color: #ffcc00;
+      font-family: 'Times New Roman', serif;
+      letter-spacing: 1px;
+    }
+
+    .modal-content p {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.8rem;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .close-btn:hover {
+      transform: scale(1.2);
+      color: #ffcc00;
+    }
+
+    .start-button, .toggle-theme, .audio-btn {
+      background: var(--accent-light);
+      color: #000;
+      padding: 1.2rem 2.5rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      margin: 1rem 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .start-button:hover, .toggle-theme:hover, .audio-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    body.dark .start-button,
+    body.dark .toggle-theme,
+    body.dark .audio-btn {
+      background: var(--accent-dark);
+      color: #000;
+    }
+
+    .timeline-nav {
+      position: fixed;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      z-index: 1001;
+    }
+
+    .timeline-nav button {
+      background: transparent;
+      border: 2px solid var(--accent-light);
+      border-radius: 50%;
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timeline-nav button::after {
+      content: attr(data-title);
+      position: absolute;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-size: 0.9rem;
+      background: rgba(0,0,0,0.7);
+      padding: 5px 15px;
+      border-radius: 20px;
+      pointer-events: none;
+    }
+
+    .timeline-nav button:hover {
+      transform: scale(1.8);
+      background: var(--accent-light);
+    }
+
+    .timeline-nav button:hover::after {
+      opacity: 1;
+    }
+
+    body.dark .timeline-nav button {
+      border-color: var(--accent-dark);
+    }
+
+    body.dark .timeline-nav button:hover {
+      background: var(--accent-dark);
+    }
+
+    .memory-wall {
+      padding: 5rem 2rem;
+      background: var(--gallery-bg-light);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    body.dark .memory-wall {
+      background: var(--gallery-bg-dark);
+    }
+
+    .memory-wall h2 {
+      font-size: 2.5rem;
+      margin-bottom: 2.5rem;
+      color: var(--accent-light);
+    }
+
+    body.dark .memory-wall h2 {
+      color: var(--accent-dark);
+    }
+
+    .memory-wall .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .memory-wall .grid img {
+      width: 100%;
+      border-radius: 8px;
+      transition: all 0.4s ease;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border: 8px solid #f5f5f5;
+      background: #f5f5f5;
+    }
+
+    body.dark .memory-wall .grid img {
+      border-color: #333;
+      background: #333;
+    }
+
+    .memory-wall .grid img:hover {
+      transform: scale(1.08) rotate(2deg);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
+
+    .audio-controls {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1001;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .volume-slider {
+      width: 100px;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+    }
+
+    .volume-slider:hover {
+      opacity: 1;
+    }
+
+    .intro-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-dark);
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: opacity 1s ease, visibility 1s ease;
+    }
+
+    .intro-overlay h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      font-family: 'Times New Roman', serif;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .intro-overlay p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      text-align: center;
+      margin-bottom: 3rem;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .progress-bar {
+      width: 300px;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-dark);
+      transition: width 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .section {
+        padding: 4rem 1rem;
+      }
+      
+      .section h2 {
+        font-size: 2rem;
+      }
+      
+      .section p {
+        font-size: 1.1rem;
+      }
+      
+      .timeline-nav {
+        right: 10px;
+      }
+      
+      .timeline-nav button::after {
+        display: none;
+      }
+      
+      .memory-wall .grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      
+      .intro-overlay h1 {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <header>
-       <article id="Logo"></article>
-        <h2>Sigma <br> Clinic</h2>
-    </header>
-    <main>
-        <section>
-            <div><h2>Complete Health Care Solution for Everyone</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio voluptate autem consequuntur quos porro non animi laudantium ea. Dolore iure necessitatibus enim! Expedita ratione nulla natus, fugiat obcaecati quis voluptatum.</p>
-        <a href=""><button>Book Now</button></a></div>
-            <div id="Nurse1" class="imageDivs"></div>
-        </section>
-        <section>
-            <div>
-                <h2>Quality care for you and the Ones you Love</h2>
-                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Possimus vitae, laboriosam asperiores, error molestias consequatur ipsa nihil beatae dolores doloremque qui provident quo cupiditate placeat animi optio debitis nam repudiandae.</p>
-            </div>
-            
-                <figure><article class="CareImg" id="heart"></article>
-                <figcaption>
-                    <h2>CardioVasulacr</h2>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing </p>
-                </figcaption></figure>
-                <figure><article class="CareImg" id="xray"></article>
-                <figcaption>
-                    <h2>CardioVasulacr</h2>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing </p>
-                </figcaption></figure>
-                <figure><article class="CareImg" id="crutch"></article>
-                <figcaption>
-                    <h2>CardioVasulacr</h2>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing </p>
-                </figcaption></figure>
-                <figure><article class="CareImg" id="lungs"></article>
-                <figcaption>
-                    <h2>CardioVasulacr</h2>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing </p>
-                </figcaption></figure>
-                <figure><article class="CareImg" id="brain"></article>
-                <figcaption>
-                    <h2>CardioVasulacr</h2>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing </p>
-                </figcaption></figure>
-                <figure><article class="CareImg" id="dentist"></article>
-                <figcaption>
-                    <h2>CardioVasulacr</h2>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing </p>
-                </figcaption></figure>
-            
-        </section>
-        <section>
-            <div>
-                <h2>Why Choose our Clinic?</h2>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum quis in nemo accusantium quam nesciunt necessitatibus aut ipsa laborum, sed quo? Eveniet repellat nostrum id impedit iure, nulla esse sapiente?</p>
-                <ul>
-                    <li><h2>25</h2>
-                    <p>Best Doctors</p></li>
-                    <li><h2>3</h2>
-                    <p>Clinc Locations</p></li>
-                    <li><h2>150 +</h2>
-                    <p>Patients Capacity</p></li>
-                    <li><h2>1900 + </h2>
-                    <p>Patients Cured</p></li>
-                    
-                </ul>
-            </div>
-            <div>
-                <ul>
-                    <li class="reasons">
-                        <article class="reasonimg" id="help"></article>
-                        <h3>Get Free Consultation</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                    </li>
-                    <li class="reasons">
-                        <article class="reasonimg" id="hours"></article>
-                        <h3>Get Free Consultation</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                    </li>
-                    <li class="reasons">
-                        <article class="reasonimg" id="doc"></article>
-                        <h3>Get Free Consultation</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                    </li>
-                    
-                </ul>
-            </div>
-        </section>
-        <section>
-            <h2>Meet out Great Doctors</h2>
-            <ul class="list">
-                <li><img src="/images/ImageLinda.png" alt=""><figcaption>Dr.Lindsay Botosh <br> <i><span>Peditrician</span></i></figcaption>
-                   
-                </li>
-                <li><img src="/images/Imagejon.png" alt=""><figcaption>Dr.Jon Doe <br>
-                <i><span>Dentist</span></i>
-                </figcaption>
-                   
-                </li>
-                <li><img src="/images/ImageSarach.png" alt=""><figcaption>Dr.Lindsay Botosh <br>
-                    <i><span>Cardiologist</span></i></figcaption>
-                   
-                </li>
-            
-            </ul>
-        </section>
-        <section>
-            <h2>
-                Testimonials
-            </h2>
-            <ul>
-                <li>
-                    <div><article class="testImg"></article>
-                    <h3>name</h3><span>mail</span></div>
-                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Qui vitae fugit harum dolor! Ab dignissimos, officia consequuntur fugiat in illum officiis iusto adipisci autem natus dicta, a, nostrum rerum quaerat!</p>
-                </li>
-              
-            </ul>
-        </section>
-        <section>
-            <h2>Frequently Asked Questions</h2>
-            <dl>
-              <dt>Can I book appointments on behalf of someone else? <button>+</button>
-                <dd>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id assumenda, cupiditate quaerat tenetur fugiat porro nostrum animi fuga quisquam exercitationem. Quibusdam veniam veritatis et nulla blanditiis sit! In, quisquam doloribus?</dd>
-              </dt>  
-            </dl>
-        </section>
-    </main>
-    <footer></footer>
+  <!-- Introduction Overlay -->
+  <div class="intro-overlay" id="introOverlay">
+    <h1>Uncle's Legacy</h1>
+    <p>A journey through the life of an extraordinary man</p>
+    <div class="progress-bar">
+      <div class="progress" id="loadingProgress"></div>
+    </div>
+  </div>
+
+  <!-- Audio Player -->
+  <div class="audio-controls">
+    <button class="audio-btn" onclick="toggleAudio()">
+      <i class="fas fa-volume-up"></i>
+    </button>
+    <input type="range" class="volume-slider" id="volume" min="0" max="1" step="0.1" value="0.5">
+  </div>
+
+  <!-- Timeline Navigation -->
+  <div class="timeline-nav">
+    <button data-title="The Beginning" onclick="scrollToID('chapter1')"></button>
+    <button data-title="Rising Up" onclick="scrollToID('chapter2')"></button>
+    <button data-title="Giving Back" onclick="scrollToID('chapter3')"></button>
+    <button data-title="Legacy" onclick="scrollToID('chapter4')"></button>
+    <button data-title="Gallery" onclick="scrollToID('memoryWall')"></button>
+  </div>
+
+  <!-- Cover Section -->
+  <div class="section active" id="cover">
+    <h2><i class="fas fa-book-open"></i> Uncle's Story</h2>
+    <p>An immersive journey through the life of a remarkable man</p>
+    <button class="start-button" onclick="scrollToID('chapter1')">
+      <i class="fas fa-play"></i> Begin the Journey
+    </button>
+    <button class="toggle-theme" onclick="toggleTheme()">
+      <i class="fas fa-adjust"></i> Toggle Museum Lighting
+    </button>
+  </div>
+
+  <!-- Chapter 1 -->
+  <div class="section" id="chapter1">
+    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=80" 
+         onclick="openModal('Humble Beginnings', 'Born in 1950 in a small rural village, Uncle showed remarkable curiosity from an early age. Despite limited resources, he taught himself to read using borrowed books and newspapers. His childhood was filled with adventures in the nearby woods and rivers, experiences that shaped his lifelong love for nature and storytelling.')">
+    <h2><i class="fas fa-seedling"></i> Chapter 1: The Early Years</h2>
+    <p>Where roots were planted and dreams began to grow</p>
+  </div>
+
+  <!-- Chapter 2 -->
+  <div class="section" id="chapter2">
+    <img src="https://images.unsplash.com/photo-1573496781985-6d2806a01c1a?auto=format&fit=crop&w=1000&q=80" 
+         onclick="openModal('Building Dreams', 'In his twenties, Uncle moved to the city with nothing but a suitcase and unwavering determination. He worked multiple jobs during the day while attending night school. His perseverance paid off when he landed his first engineering position. Colleagues remember him as the first to arrive and last to leave, always willing to mentor newcomers.')">
+    <h2><i class="fas fa-mountain"></i> Chapter 2: Building Dreams</h2>
+    <p>Overcoming obstacles to create a foundation for others</p>
+  </div>
+
+  <!-- Chapter 3 -->
+  <div class="section" id="chapter3">
+    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=80" 
+         onclick="openModal('A Heart for Others', 'After achieving professional success, Uncle dedicated his life to helping others. He established scholarship programs for underprivileged youth, volunteered at community centers, and became a beloved mentor to many. His philosophy was simple: "Success means nothing unless you use it to lift others up."')">
+    <h2><i class="fas fa-hands-helping"></i> Chapter 3: Generosity of Spirit</h2>
+    <p>Giving back to the community that shaped him</p>
+  </div>
+
+  <!-- Chapter 4 -->
+  <div class="section" id="chapter4">
+    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1000&q=80" 
+         onclick="openModal('Everlasting Impact', 'Even after his passing, Uncle\'s legacy continues through the countless lives he touched. His wisdom, kindness, and humor live on in family stories, community projects he initiated, and the values he instilled in younger generations. His life remains a testament to the power of perseverance, generosity, and love.')">
+    <h2><i class="fas fa-heart"></i> Chapter 4: Everlasting Legacy</h2>
+    <p>A life that continues to inspire generations</p>
+  </div>
+
+  <!-- Memory Wall -->
+  <div class="memory-wall section" id="memoryWall">
+    <h2><i class="fas fa-images"></i> Memory Gallery</h2>
+    <p>Moments that tell the story of a life well-lived</p>
+    <div class="grid">
+      <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80" 
+           alt="Family gathering" onclick="openModal('Family Moments', 'Uncle with his siblings during the 1985 family reunion. He was always the life of the party, telling stories that had everyone laughing.')">
+      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" 
+           alt="Community event" onclick="openModal('Community Leader', 'Uncle speaking at the opening of the community center he helped establish in 1998. He believed that education was the key to empowerment.')">
+      <img src="https://images.unsplash.com/photo-1532274402917-5aadf881bdf4?auto=format&fit=crop&w=600&q=80" 
+           alt="Nature lover" onclick="openModal('Nature Enthusiast', 'On his favorite hiking trail in the mountains. Uncle found peace in nature and often said it was his "true church."')">
+      <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80" 
+           alt="Teaching" onclick="openModal('Mentor', 'Teaching his grandson to fish in 2005. He believed in passing down skills and wisdom to the next generation.')">
+      <img src="https://images.unsplash.com/photo-1568992688065-536aad8a12f6?auto=format&fit=crop&w=600&q=80" 
+           alt="Celebration" onclick="openModal('Celebration', 'His 60th birthday party surrounded by family and friends. He always said his greatest achievement was the relationships he built.')">
+      <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=600&q=80" 
+           alt="Legacy" onclick="openModal('Legacy', 'The scholarship plaque at the local high school, established in his name to help students pursue higher education.')">
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="close-btn" onclick="closeModal()">&times;</div>
+    <div class="modal-content" id="modal-content">
+      <h3>Exhibit Details</h3>
+      <p>Additional information about this exhibit</p>
+    </div>
+  </div>
+
+  <script>
+    // Initialize GSAP and ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Simulate loading progress
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+      progress += 5;
+      document.getElementById('loadingProgress').style.width = `${progress}%`;
+      
+      if (progress >= 100) {
+        clearInterval(progressInterval);
+        // Animate intro overlay out
+        gsap.to("#introOverlay", {
+          opacity: 0,
+          visibility: "hidden",
+          duration: 1.5,
+          ease: "power2.out"
+        });
+      }
+    }, 100);
+    
+    // Initialize ScrollTrigger animations
+    gsap.utils.toArray(".section").forEach((section, index) => {
+      if (index === 0) return; // Skip the first section that's already active
+      
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top 80%",
+        onEnter: () => section.classList.add("active"),
+        onLeaveBack: () => section.classList.remove("active")
+      });
+    });
+    
+    // Set up audio controls
+    const bgAudio = new Audio("https://cdn.pixabay.com/audio/2023/03/28/audio_3988bb4f0f.mp3");
+    bgAudio.loop = true;
+    bgAudio.volume = 0.5;
+    
+    // Play audio after intro
+    setTimeout(() => {
+      bgAudio.play().catch(e => console.log("Audio play requires user interaction"));
+    }, 3500);
+    
+    function toggleAudio() {
+      if (bgAudio.paused) {
+        bgAudio.play();
+      } else {
+        bgAudio.pause();
+      }
+    }
+    
+    document.getElementById("volume").addEventListener("input", (e) => {
+      bgAudio.volume = e.target.value;
+    });
+    
+    // Modal functions
+    function openModal(title, text) {
+      const modal = document.getElementById("modal");
+      const modalContent = document.getElementById("modal-content");
+      modalContent.innerHTML = `
+        <h3>${title}</h3>
+        <p>${text}</p>
+        <div class="exhibit-footer">
+          <small><i class="fas fa-history"></i> From the family archives</small>
+        </div>
+      `;
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+    
+    function closeModal() {
+      document.getElementById("modal").classList.remove("active");
+      document.body.style.overflow = "auto";
+    }
+    
+    // Theme toggle
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+    }
+    
+    // Scroll to section
+    function scrollToID(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+      // Activate the section
+      document.getElementById(id).classList.add("active");
+    }
+    
+    // Close modal when clicking outside content
+    document.getElementById("modal").addEventListener("click", (e) => {
+      if (e.target === document.getElementById("modal")) {
+        closeModal();
+      }
+    });
+    
+    // Add parallax effects to images
+    gsap.utils.toArray(".section img").forEach(img => {
+      gsap.from(img, {
+        scrollTrigger: {
+          trigger: img,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        },
+        y: -100,
+        opacity: 0.5,
+        duration: 2
+      });
+    });
+  </script>
 </body>
 </html>
